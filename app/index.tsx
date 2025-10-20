@@ -9,7 +9,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Welcome to Plannery</Text>
+      <Text>Welcome to the Plannery App</Text>
     </View>
   );
 }
