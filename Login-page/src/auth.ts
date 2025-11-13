@@ -1,39 +1,32 @@
+// auth.ts
+
 import express, { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import { createUser, findUser, validatePassword } from "./users";
+import { createUser, findUser, validatePassword, updateUserPassword } from "./users"; // ⚠️ Import updateUserPassword
+import { authenticateToken } from "./middleware"; // ⚠️ Import middleware
 
 const router = express.Router();
 const SECRET_KEY = "mysecretkey"; // ⚠️ Replace with process.env.SECRET_KEY in production
 
-// ✅ Register endpoint
-router.post("/register", async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+// ... (Existing /register and /login endpoints)
 
-  if (!username || !password) {
-    return res.status(400).json({ message: "Username and password are required." });
-  }
+// ✅ Reset/Change Password endpoint (Requires authentication)
+router.post("/change-password", authenticateToken, async (req: Request, res: Response) => {
+    // Note: The username is available in req.user from the middleware
+    const { newPassword } = req.body;
+    const username = (req as any).user.username; // Get username from the token payload
 
-  const existing = await findUser(username);
-  if (existing) {
-    return res.status(400).json({ message: "User already exists." });
-  }
+    if (!newPassword) {
+        return res.status(400).json({ message: "New password is required." });
+    }
 
-  const newUser = await createUser(username, password);
-  res.status(201).json({ message: "User created successfully", user: newUser.username });
-});
-
-// ✅ Login endpoint
-router.post("/login", async (req: Request, res: Response) => {
-  const { username, password } = req.body;
-
-  const user = await findUser(username);
-  if (!user) return res.status(400).json({ message: "Invalid credentials" });
-
-  const isValid = await validatePassword(user, password);
-  if (!isValid) return res.status(400).json({ message: "Invalid credentials" });
-
-  const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
-  res.json({ message: "Login successful", token });
+    try {
+        await updateUserPassword(username, newPassword);
+        res.json({ message: "Password updated successfully." });
+    } catch (error) {
+        // Handle case where user might not be found (though middleware ensures they exist)
+        res.status(500).json({ message: "Could not update password." });
+    }
 });
 
 export default router;
