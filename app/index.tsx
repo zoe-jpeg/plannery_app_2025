@@ -1,228 +1,230 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import {
-  Alert,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Alert, 
+  SafeAreaView, 
+  Platform 
 } from 'react-native';
+import { useAuth } from './_layout';
+import { Link, useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { API_URL } from '@env';
 
-// --- STYLING CONSTANTS ---
-const PURPLE = '#7e57c2'; // Main accent color
-const LIGHT_PURPLE = '#ede7f6'; // Background color
+console.log("API URL:", API_URL);
+
+const PURPLE = '#7e57c2';
+const LIGHT_PURPLE = '#ede7f6';
 const WHITE = '#FFFFFF';
-const BORDER_RADIUS = 8;
+const BORDER_RADIUS = 15;
+ // Make sure this matches your Node.js server port
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState('');
+export default function IndexScreen() {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const router = useRouter();
+  const { setToken } = useAuth(); // Get the function to save the token and trigger re-render
 
-  // --- API CALL FUNCTION ---
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password.');
+  const handleSignIn = async () => {
+    if (!username || !password) {
+      Alert.alert('Error', 'Please enter both username and password.');
       return;
     }
 
-    // NOTE: If running on a real device/emulator, replace 'localhost' with your 
-    // computer's local IP address (e.g., 'http://192.168.x.x:3000')
-    const API_URL = 'http://10.162.174.1:3000/auth/login';
-
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // Backend expects 'username' (which we use the email for) and 'password'
-        body: JSON.stringify({ username: email, password: password }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
       });
-      
+
       const data = await response.json();
 
-      if (response.ok) {
-        console.log('Login Successful! Token:', data.token);
-        Alert.alert('Success', 'Logged in successfully!');
+      if (response.ok && data.token) {
+        // --- CRITICAL STEP: SAVE TOKEN ---
+        await setToken(data.token); 
         
-        // TODO: Store token securely and navigate to the main app screen
-        // router.replace('/'); 
+        // The setToken function inside AuthProvider in _layout.tsx
+        // updates the global 'token' state, which automatically
+        // triggers the router logic to redirect to the (tabs) group.
+        // We do NOT need router.replace('/(tabs)/home'); here.
         
       } else {
-        // Display backend error message
-        Alert.alert('Login Failed', data.message || 'An unknown error occurred.');
+        // Check for specific error message from backend
+        const message = data.message || 'An unknown error occurred.';
+        Alert.alert('Login Failed', message);
       }
     } catch (error) {
-      console.error('Network Error:', error);
-      Alert.alert('Error', 'Could not connect to the server. Check if the API is running.');
+      console.error('Network or Login Error:', error);
+      Alert.alert('Login Error', 'Could not connect to the server or process the request.');
     }
   };
 
-  // --- UI RENDERING ---
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header (Back button, Title, User Icon) */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color={PURPLE} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Login</Text>
-        <View style={styles.placeholderIcon}>
-            <MaterialCommunityIcons name="account-circle" size={30} color={PURPLE} />
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Header (Simplified) */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Login</Text>
+          <MaterialCommunityIcons name="account-circle" size={30} color={PURPLE} />
         </View>
-      </View>
 
-      {/* Login Card Container */}
-      <View style={styles.card}>
-        
-        {/* Email Input */}
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Value"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        {/* Password Input */}
-        <Text style={styles.label}>Password</Text>
-        <View style={styles.passwordContainer}>
+        <View style={styles.card}>
+          {/* Username/Email Input */}
+          <Text style={styles.label}>Email (Username)</Text>
           <TextInput
-            style={styles.passwordInput}
-            placeholder="Value"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
+            style={styles.input}
+            value={username}
+            onChangeText={setUsername}
+            placeholder="Enter your username"
+            autoCapitalize="none"
           />
-          <TouchableOpacity 
-            style={styles.eyeIcon} 
-            onPress={() => setShowPassword(!showPassword)}
-          >
-            <MaterialCommunityIcons 
-              name={showPassword ? 'eye-off' : 'eye'} 
-              size={24} 
-              color="#666" 
+
+          {/* Password Input */}
+          <Text style={styles.label}>Password</Text>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Enter your password"
+              secureTextEntry={!isPasswordVisible}
             />
+            <TouchableOpacity 
+              style={styles.eyeButton} 
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+            >
+              <MaterialCommunityIcons 
+                name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'} 
+                size={24} 
+                color="#666" 
+              />
+            </TouchableOpacity>
+          </View>
+          
+          <Link href="/reset" asChild>
+            <Text style={styles.forgotPassword}>Forgot password?</Text>
+          </Link>
+
+          <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+            <Text style={styles.buttonText}>Sign In</Text>
           </TouchableOpacity>
+          
+          <Text style={styles.signUpText}>
+             Don't have an account? 
+             <Link href="/register" style={styles.signUpLink} asChild>
+                <Text style={styles.signUpLink}> Sign Up</Text>
+             </Link>
+          </Text>
         </View>
-
-        {/* Sign In Button */}
-        <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
-          <Text style={styles.signInButtonText}>Sign In</Text>
-        </TouchableOpacity>
-
-        {/* Forgot Password Link */}
-        // login.tsx
-
-// ... (inside the Forgot Password TouchableOpacity)
-
-<TouchableOpacity onPress={() => router.push('./reset')}>
-    <Text style={styles.forgotPasswordText}>
-        Forgot password?
-    </Text>
-</TouchableOpacity>
-        
       </View>
     </SafeAreaView>
   );
-};
+}
 
-// --- STYLESHEET ---
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: LIGHT_PURPLE,
   },
+  container: {
+    flex: 1,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center', // Center content vertically
+  },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    backgroundColor: LIGHT_PURPLE,
-    borderBottomWidth: 1,
-    borderBottomColor: PURPLE,
+    width: '100%',
+    maxWidth: 400,
+    alignItems: 'center',
+    marginBottom: 40,
   },
-  backButton: {
-    padding: 5,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
     color: PURPLE,
   },
-  placeholderIcon: {
-    width: 30, 
-  },
   card: {
+    width: '100%',
+    maxWidth: 400,
     backgroundColor: WHITE,
-    margin: 20,
-    padding: 20,
     borderRadius: BORDER_RADIUS,
+    padding: 25,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 5,
+    elevation: 8,
   },
   label: {
     fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 5,
+    marginBottom: 8,
     marginTop: 15,
+    color: PURPLE,
+    fontWeight: '600',
   },
   input: {
-    height: 45,
-    borderColor: '#ddd',
+    height: 50,
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: BORDER_RADIUS,
-    paddingHorizontal: 10,
-    backgroundColor: WHITE,
+    borderRadius: 8,
+    paddingHorizontal: 15,
     fontSize: 16,
+    backgroundColor: '#f9f9f9',
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 45,
-    borderColor: '#ddd',
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: BORDER_RADIUS,
-    backgroundColor: WHITE,
-    fontSize: 16,
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9',
+    height: 50,
   },
   passwordInput: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     fontSize: 16,
+    height: '100%',
   },
-  eyeIcon: {
+  eyeButton: {
     padding: 10,
   },
-  signInButton: {
-    backgroundColor: PURPLE,
-    padding: 15,
-    borderRadius: BORDER_RADIUS,
-    alignItems: 'center',
-    marginTop: 30,
-    marginBottom: 15,
+  forgotPassword: {
+    alignSelf: 'flex-start',
+    marginTop: 10,
+    marginBottom: 20,
+    color: PURPLE,
+    textDecorationLine: 'underline',
+    fontSize: 14,
   },
-  signInButtonText: {
+  button: {
+    backgroundColor: PURPLE,
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
     color: WHITE,
     fontSize: 18,
     fontWeight: 'bold',
   },
-  forgotPasswordText: {
-    color: PURPLE,
-    fontSize: 14,
-    textAlign: 'left',
-    paddingLeft: 5,
-    textDecorationLine: 'underline',
+  signUpText: {
+    marginTop: 20,
+    textAlign: 'center',
+    color: '#666',
   },
+  signUpLink: {
+    color: PURPLE,
+    fontWeight: 'bold',
+  }
 });
-
-export default LoginScreen;

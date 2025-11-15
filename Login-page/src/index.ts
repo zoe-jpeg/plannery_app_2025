@@ -1,21 +1,27 @@
-import express from "express";
-import bodyParser from "body-parser";
-import authRoutes from "./auth";
+import express from "express"; // <-- **CRITICAL CHANGE: REMOVE ALL NAMED IMPORTS**
+import * as authModule from "./auth.ts";
 
+// 1. Initialize Express App
 const app = express();
-const PORT = 3000;
+const PORT = 3000; 
 
-app.use(bodyParser.json());
+// 2. Middleware setup
+app.use(express.json()); // <-- Use express.json() instead of just json()
+app.use(express.urlencoded({ extended: true })); // <-- Use express.urlencoded()
 
-// Authentication routes
-app.use("/auth", authRoutes);
+// 3. Mount Router
+app.use("/api/auth", authModule.default); 
 
-// Test route
+// 4. Test route
 app.get("/", (req, res) => {
+  console.log("GET / called");
   res.send("✅ Welcome to the Login System API!");
 });
 
-// Start server
+// 5. Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`✅ Server is running on http://localhost:${PORT}`);
+  console.log("API Endpoints:");
+  console.log(`- POST /api/auth/register`);
+  console.log(`- POST /api/auth/login`);
 });

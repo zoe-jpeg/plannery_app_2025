@@ -1,15 +1,15 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  Alert,
+  SafeAreaView,
   StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
-  Alert,
+  View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // --- STYLING CONSTANTS (Matching LoginScreen) ---
 const PURPLE = '#7e57c2';
@@ -21,21 +21,20 @@ const ResetPasswordScreen = () => {
   const [email, setEmail] = useState('');
   const router = useRouter();
 
-  // --- HANDLER FUNCTION ---
+  // --- HANDLER FUNCTION: SIMULATE EMAIL ---
   const handleResetPassword = async () => {
-    // In a real application, this would send an email. 
-    // For your CS 1200 project, we will simulate the success.
     
     if (!email) {
       Alert.alert('Error', 'Please enter your email address.');
       return;
     }
 
-    // Since our backend doesn't implement email sending, we simulate the success
-    // and provide feedback to the user.
+    // SIMULATION: Since the backend doesn't handle actual email sending, 
+    // we immediately show a success message and close the modal.
+    
     Alert.alert(
       'Password Reset Requested',
-      `A password reset link has been sent to ${email}. Check your inbox.`,
+      `A password reset link has been simulated and sent to ${email}. Check your inbox.`,
       [
         { text: 'OK', onPress: () => router.back() } // Navigate back to login
       ]
@@ -53,16 +52,16 @@ const ResetPasswordScreen = () => {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <MaterialCommunityIcons name="arrow-left" size={24} color={PURPLE} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Reset Password</Text>
+        <Text style={styles.headerTitle}>Forgot Password</Text>
         <View style={styles.placeholderIcon}>
             <MaterialCommunityIcons name="account-circle" size={30} color={PURPLE} />
         </View>
       </View>
 
-      {/* Reset Card Container (The pale purple box in your mockup) */}
+      {/* Reset Card Container */}
       <View style={styles.card}>
         
-        <Text style={styles.instructionText}>Enter your email address:</Text>
+        <Text style={styles.instructionText}>Enter your email address to receive a password reset link:</Text>
         
         {/* Email Input */}
         <TextInput
@@ -87,7 +86,7 @@ const ResetPasswordScreen = () => {
             style={styles.resetButton} 
             onPress={handleResetPassword}
           >
-            <Text style={styles.resetButtonText}>Reset Password</Text>
+            <Text style={styles.resetButtonText}>Send Reset Link</Text>
           </TouchableOpacity>
           
         </View>
