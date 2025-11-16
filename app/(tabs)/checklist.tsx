@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { format as formatDateFn, isValid, parse } from 'date-fns';
 import React, { useEffect, useState } from "react";
 import {
@@ -66,7 +65,6 @@ export default function ChecklistScreen() {
   const [tasks, setTasks] = useTasks();
   const [courses, setCourses] = useCourses();
   const [showModal, setShowModal] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [showCourseDropdown, setShowCourseDropdown] = useState(false);
   const [showAddCourse, setShowAddCourse] = useState(false);
   const [sortBy, setSortBy] = useState<'none'|'date'|'course'>('none');
@@ -134,12 +132,6 @@ export default function ChecklistScreen() {
     );
   };
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return "No due date";
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  };
-
-  // update typed date text when dueDate changes (picker selection)
   useEffect(() => {
     if (dueDate) setDueDateText(formatDateFn(dueDate, 'MM/dd/yyyy'));
     else setDueDateText('');
@@ -316,64 +308,34 @@ export default function ChecklistScreen() {
               keyboardType="numbers-and-punctuation"
             />
 
-            <TouchableOpacity
-              onPress={() => setShowDatePicker(!showDatePicker)}
-              style={[styles.modalInput, { marginTop: 8 }]}
-            >
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <Text style={{ color: dueDate ? "#333" : "#999", fontWeight: "500" }}>
-                  {formatDate(dueDate)}
-                </Text>
-                <Ionicons name="calendar" size={18} color="#7C3AED" />
-              </View>
-            </TouchableOpacity>
-
-            {showDatePicker && (
-              <View style={styles.datePickerContainer}>
-                <DateTimePicker
-                  value={dueDate || new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={(event: any, selectedDate?: Date) => {
-                    if (selectedDate) setDueDate(selectedDate);
-                    setShowDatePicker(false);
-                  }}
-                />
-                <View style={{ flexDirection: 'row', marginTop: 8, gap: 8 }}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      const tomorrow = new Date();
-                      tomorrow.setDate(tomorrow.getDate() + 1);
-                      setDueDate(tomorrow);
-                      setShowDatePicker(false);
-                    }}
-                    style={styles.quickDateButton}
-                  >
-                    <Text style={styles.quickDateButtonText}>Tomorrow</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      const nextWeek = new Date();
-                      nextWeek.setDate(nextWeek.getDate() + 7);
-                      setDueDate(nextWeek);
-                      setShowDatePicker(false);
-                    }}
-                    style={styles.quickDateButton}
-                  >
-                    <Text style={styles.quickDateButtonText}>Next Week</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setDueDate(null);
-                      setShowDatePicker(false);
-                    }}
-                    style={styles.quickDateButton}
-                  >
-                    <Text style={styles.quickDateButtonText}>Clear</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
+            <View style={{ flexDirection: 'row', marginTop: 12, gap: 8 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  const tomorrow = new Date();
+                  tomorrow.setDate(tomorrow.getDate() + 1);
+                  setDueDate(tomorrow);
+                }}
+                style={[styles.quickDateButton, { flex: 1 }]}
+              >
+                <Text style={styles.quickDateButtonText}>Tomorrow</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  const nextWeek = new Date();
+                  nextWeek.setDate(nextWeek.getDate() + 7);
+                  setDueDate(nextWeek);
+                }}
+                style={[styles.quickDateButton, { flex: 1 }]}
+              >
+                <Text style={styles.quickDateButtonText}>Next Week</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setDueDate(null)}
+                style={[styles.quickDateButton, { flex: 1 }]}
+              >
+                <Text style={styles.quickDateButtonText}>Clear</Text>
+              </TouchableOpacity>
+            </View>
 
             <View style={{ flexDirection: "row", gap: 12, marginTop: 24 }}>
               <TouchableOpacity onPress={handleAddTask} style={styles.modalButton}>
