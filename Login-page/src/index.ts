@@ -3,7 +3,7 @@ import * as authModule from "./auth.ts";
 
 // 1. Initialize Express App
 const app = express();
-const PORT = 3000; 
+const PORT = 3001; 
 
 // 2. Middleware setup
 app.use(express.json()); // <-- Use express.json() instead of just json()
