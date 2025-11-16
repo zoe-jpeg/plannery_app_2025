@@ -1,4 +1,5 @@
 # 📓 Plannery
+### ✏️ Semester Project for CS 1200 | Group 31
 
 ###### ⭐︎ *an app to take the stress off of students shoulders and make organization easy* ⭐︎
 
