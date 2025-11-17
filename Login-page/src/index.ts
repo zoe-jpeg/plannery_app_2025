@@ -1,4 +1,4 @@
-import express from "express"; // <-- **CRITICAL CHANGE: REMOVE ALL NAMED IMPORTS**
+import express from "express"; 
 import * as authModule from "./auth.ts";
 
 // 1. Initialize Express App
@@ -6,8 +6,8 @@ const app = express();
 const PORT = 3001; 
 
 // 2. Middleware setup
-app.use(express.json()); // <-- Use express.json() instead of just json()
-app.use(express.urlencoded({ extended: true })); // <-- Use express.urlencoded()
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // 3. Mount Router
 app.use("/api/auth", authModule.default); 

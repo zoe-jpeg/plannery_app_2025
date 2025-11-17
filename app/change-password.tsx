@@ -38,8 +38,7 @@ const ChangePasswordScreen = () => {
       return;
     }
     
-    // IMPORTANT: Since this screen is now only reachable when logged in, 
-    // we should have a token. This check catches unexpected errors.
+    
     if (!token) {
         Alert.alert('Error', 'Authentication required. Please log in again.');
         setToken(null);

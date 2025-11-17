@@ -11,7 +11,6 @@ import {
   View,
 } from 'react-native';
 
-// --- STYLING CONSTANTS (Matching LoginScreen) ---
 const PURPLE = '#7e57c2';
 const LIGHT_PURPLE = '#ede7f6';
 const WHITE = '#FFFFFF';
@@ -40,7 +39,6 @@ const ResetPasswordScreen = () => {
       ]
     );
     
-    // Optionally, clear the input
     setEmail('');
   };
 
@@ -95,7 +93,6 @@ const ResetPasswordScreen = () => {
   );
 };
 
-// --- STYLESHEET ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -107,9 +104,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 15,
     paddingHorizontal: 20,
-    backgroundColor: LIGHT_PURPLE, // Assuming the header background matches the container
+    backgroundColor: LIGHT_PURPLE, 
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.1)', // Subtle line
+    borderBottomColor: 'rgba(0,0,0,0.1)', 
   },
   backButton: {
     padding: 5,

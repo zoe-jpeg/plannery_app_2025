@@ -11,16 +11,14 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
         return res.sendStatus(401); // Unauthorized
     }
 
-    // Verify the token
-    // FIX 2 & 3: Add explicit types for error (jwt.VerifyErrors) and user (object | string)
+    
     jwt.verify(token, SECRET_KEY, (err: jwt.VerifyErrors | null, user: any) => {
         if (err) {
             return res.sendStatus(403); // Forbidden (Token is invalid or expired)
         }
         
-        // Attach user info to the request object. We use 'any' here since the structure of 
-        // the user payload is defined in auth.ts (username: string)
+        
         req.user = user;
-        next(); // Proceed to the protected route handler
+        next(); // Proceeds to the protected route handler
     });
 };

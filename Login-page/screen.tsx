@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; // You'll need to install react-native-vector-icons
+import Icon from 'react-native-vector-icons/Ionicons'; 
 
 // --- 1. Type Definitions ---
 interface FormErrors {
@@ -49,11 +49,11 @@ const LoginScreen: React.FC = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // **Validation Passed**: You would typically call an API here
+      
       Alert.alert('Success', `Logging in with Email: ${email}`);
-      // Navigate to the next screen upon successful login
+      // Navigates to the next screen upon successful login
     } else {
-      // **Validation Failed**: Errors are displayed below the inputs
+      
       Alert.alert('Login Failed', 'Please correct the errors in the form.');
     }
   };
@@ -92,7 +92,7 @@ const LoginScreen: React.FC = () => {
           <Text style={styles.label}>Password</Text>
           <View style={styles.passwordContainer}>
             <TextInput
-              // This line fixes the error when 'errors.password' is undefined/false
+              
               style={[
                 styles.input, 
                 styles.passwordInput, 
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   inputError: {
-    borderColor: 'red', // Highlight input field border if there's an error
+    borderColor: 'red', 
   },
   passwordContainer: {
     flexDirection: 'row',
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
-    paddingRight: 50, // Make space for the eye icon
+    paddingRight: 50, 
   },
   eyeIcon: {
     position: 'absolute',
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   signInButton: {
-    backgroundColor: '#6a5acd', // A nice purple color similar to the wireframe
+    backgroundColor: '#6a5acd', 
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',

@@ -8,18 +8,15 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-// Note: register.tsx is in the 'app' folder, so the path to _layout.tsx (which is also in 'app') is './_layout'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Link, useRouter } from 'expo-router';
 import { useAuth } from './_layout';
 
-// --- STYLING CONSTANTS (Match your colors if needed) ---
 const PURPLE = '#7e57c2';
 const LIGHT_PURPLE = '#ede7f6';
 const WHITE = '#FFFFFF';
 const BORDER_RADIUS = 15;
 
-// IMPORTANT: Replace with your actual IP address and port
 import { API_URL } from '@env';
 
 export default function RegisterScreen() {
@@ -57,13 +54,12 @@ export default function RegisterScreen() {
         Alert.alert('Success', 'Account created and logged in!');
         router.replace('/');
       } else {
-        // Handle server-side errors (e.g., 409 User Exists)
+        // Handle server-side errors 
         const message = data.message || 'Registration failed due to an unknown server error.';
         Alert.alert('Registration Failed', message);
         console.log('Server Error Details:', data); 
       }
     } catch (error) {
-      // CRITICAL LOG: Logs network issues (e.g., firewall, server not running)
       console.error('NETWORK CONNECTION FAILURE:', error);
       Alert.alert('Connection Error', 'Could not reach the server. Please check your API URL and ensure the Node.js server is running.');
     }

@@ -20,14 +20,13 @@ const PURPLE = '#7e57c2';
 const LIGHT_PURPLE = '#ede7f6';
 const WHITE = '#FFFFFF';
 const BORDER_RADIUS = 15;
- // Make sure this matches your Node.js server port
 
 export default function IndexScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const router = useRouter();
-  const { setToken } = useAuth(); // Get the function to save the token and trigger re-render
+  const { setToken } = useAuth(); // Gets the function to save the token and trigger re-render
 
   const handleSignIn = async () => {
     if (!username || !password) {

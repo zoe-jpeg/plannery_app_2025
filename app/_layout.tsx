@@ -68,7 +68,7 @@ function AppStack() {
   const { token, isLoading } = useAuth();
   
   if (isLoading) {
-      // You might show a loading spinner here
+      
       return <Stack><Stack.Screen name="index" options={{ headerShown: false }} /></Stack>;
   }
 
