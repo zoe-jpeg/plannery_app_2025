@@ -3,15 +3,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format as formatDateFn, isValid, parse } from 'date-fns';
 import React, { useEffect, useState } from "react";
 import {
-     Alert,
-     FlatList,
-     Modal,
-     ScrollView,
-     StyleSheet,
-     Text,
-     TextInput,
-     TouchableOpacity,
-     View,
+  Alert,
+  FlatList,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomNav from "../components/BottomNav";
